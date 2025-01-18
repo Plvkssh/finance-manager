@@ -1,28 +1,29 @@
-package util;
+package utils;
 
 import model.User;
 
-import java.io.*;
+import java.io.*; // Импортируем классы для работы с файлом
 import java.util.HashMap;
-import java.util.Map;
 
+// Класс FileUtils предоставляет методы для работы с файлами
 public class FileUtils {
-
-    public static void saveUsers(Map<String, User> users, String fileName) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeObject(users);
-        } catch (IOException e) {
-            System.out.println("Не удалось сохранить данные: " + e.getMessage());
+    // Метод для загрузки пользователей из файла
+    public static HashMap<String, User> loadUsers(String filename) {
+        HashMap<String, User> users = new HashMap<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            users = (HashMap<String, User>) ois.readObject(); // Читаем объекты из файла
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace(); // Обработка ошибок
         }
+        return users; // Возвращаем загруженных пользователей
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, User> loadUsers(String fileName) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            return (Map<String, User>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Не удалось загрузить данные. Начало с чистого состояния.");
-            return new HashMap<>();
+    // Метод для сохранения пользователей в файл
+    public static void saveUsers(String filename, HashMap<String, User> users) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(users); // Записываем объекты в файл
+        } catch (IOException e) {
+            e.printStackTrace(); // Обработка ошибок
         }
     }
 }
